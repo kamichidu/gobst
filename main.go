@@ -129,8 +129,11 @@ func run(stdin io.Reader, stdout, stderr io.Writer, args []string) int {
 	if err := flg.Parse(args[1:]); err == flag.ErrHelp {
 		return 0
 	} else if err != nil {
-		fmt.Println(stderr, err)
+		fmt.Fprintln(stderr, err)
 		return 128
+	} else if opts.ShowVersion {
+		fmt.Fprintf(stdout, "%s %s\n", flg.Name(), version)
+		return 0
 	} else if flg.NArg() != 1 {
 		flg.Usage()
 		return 128
