@@ -74,14 +74,11 @@ type options struct {
 	ShowVersion bool
 }
 
-func makeTemplate(name string, r io.Reader, dir string, pat *regexp.Regexp) (*template.Template, error) {
-	text, err := ioutil.ReadAll(r)
-	if err != nil {
-		return nil, err
+func parseRecursiveTemplate(tpl *template.Template, dir string, pat *regexp.Regexp) error {
+	if dir == "" {
+		return nil
 	}
-
-	tpl := template.New("")
-	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		} else if info.IsDir() {
@@ -91,19 +88,21 @@ func makeTemplate(name string, r io.Reader, dir string, pat *regexp.Regexp) (*te
 		if !pat.MatchString(info.Name()) {
 			return nil
 		}
-		// template name is slash separated relative path
-		name := filepath.ToSlash(path)
-		abspath := filepath.Join(dir, path)
-		text, err := ioutil.ReadFile(abspath)
-		if err != nil {
-			return err
-		}
 		// set outside variable
-		// want to use relpath as a template name, use Parse() not ParseFiles()
-		tpl, err = tpl.New(name).Parse(string(text))
+		// a template name will be a basename of file
+		tpl, err = tpl.ParseFiles(path)
 		return err
 	})
+}
+
+func makeTemplate(name string, r io.Reader, dir string, pat *regexp.Regexp) (*template.Template, error) {
+	text, err := ioutil.ReadAll(r)
 	if err != nil {
+		return nil, err
+	}
+
+	tpl := template.New("")
+	if err := parseRecursiveTemplate(tpl, dir, pat); err != nil {
 		return nil, err
 	}
 	return tpl.New(name).Parse(string(text))
@@ -124,7 +123,7 @@ func run(stdin io.Reader, stdout, stderr io.Writer, args []string) int {
 	flg.Bool("h", false, "show help message")
 	flg.BoolVar(&opts.ShowVersion, "v", false, "show version")
 	flg.StringVar(&opts.OutFile, "o", "-", "output `FILE`")
-	flg.StringVar(&opts.Dir, "dir", ".", "the `DIRECTORY` that finding template files matching glob")
+	flg.StringVar(&opts.Dir, "dir", "", "the `DIRECTORY` that finding template files matching glob")
 	flg.StringVar(&opts.Pat, "pat", `\.tmpl$`, "template file `REGEXP`")
 	if err := flg.Parse(args[1:]); err == flag.ErrHelp {
 		return 0
