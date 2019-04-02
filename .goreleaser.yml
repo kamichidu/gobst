@@ -22,7 +22,7 @@ release:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-{{ .Commit }}"
+  name_template: "{{ .Tag }}-{{ .ShortCommit }}"
 changelog:
   sort: asc
   filters:
