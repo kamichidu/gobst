@@ -13,6 +13,8 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/kamichidu/gobst/funcs"
 )
 
 type flagVariable map[string]interface{}
@@ -102,6 +104,7 @@ func makeTemplate(name string, r io.Reader, dir string, pat *regexp.Regexp) (*te
 	}
 
 	tpl := template.New("")
+	tpl = tpl.Funcs(funcs.Funcs())
 	if err := parseRecursiveTemplate(tpl, dir, pat); err != nil {
 		return nil, err
 	}
