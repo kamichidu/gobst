@@ -19,10 +19,28 @@ build:
 release:
   steps:
     - script:
+        name: check HEAD has new tag or not
+        code: |
+          if git describe --tags --exact-match 2>/dev/null; then
+            echo "tag found on HEAD"
+            export RELEASE=yes
+          else
+            echo "no tag found on HEAD, skipping"
+            export RELEASE=
+          fi
+    - script:
         name: install goreleaser
         code: |
-          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh -s -- -b $(go env GOPATH)/bin
+          if [[ -z "${RELEASE}" ]]; then
+            echo "skipped"
+          else
+            curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh -s -- -b $(go env GOPATH)/bin
+          fi
     - script:
         name: goreleaser release
         code: |
-          goreleaser release
+          if [[ -z "${RELEASE}" ]]; then
+            echo "skipped"
+          else
+            goreleaser release
+          fi
