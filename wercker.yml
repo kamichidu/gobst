@@ -1,0 +1,28 @@
+box: golang:1.12-stretch
+
+build:
+  steps:
+    #- wercker/setup-go-workspace
+    - script:
+        name: go mod download
+        code: |
+          go mod download
+    - script:
+        name: make lint
+        code: |
+          make lint
+    - script:
+        name: go test ./...
+        code: |
+          go test ./...
+
+release:
+  steps:
+    - script:
+        name: install goreleaser
+        code: |
+          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh -s -- -b $(go env GOPATH)/bin
+    - script:
+        name: goreleaser release
+        code: |
+          goreleaser release
