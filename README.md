@@ -42,4 +42,5 @@ gobst defined functions are listed below:
 - jsonParse(data string) interface{}
 - jsonParse(data []byte) interface{}
 - slice(args ...interface{}) []interface{}
+- keys(v map[string]interface{}) []string
 - command(args ...interface{}) map[string]interface{}
