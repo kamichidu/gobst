@@ -1,3 +1,4 @@
+[![wercker status](https://app.wercker.com/status/d37295c64db82503ca25194333bab9d4/s/master "wercker status")](https://app.wercker.com/project/byKey/d37295c64db82503ca25194333bab9d4)
 gobst
 ========================================================================================================================
 Golang text/template for cli.
