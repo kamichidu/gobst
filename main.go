@@ -57,7 +57,12 @@ func (v *flagVariableFile) Set(s string) error {
 	defer file.Close()
 
 	dec := json.NewDecoder(file)
-	return dec.Decode(v)
+	if err := dec.Decode(v); err == io.EOF {
+		return fmt.Errorf("given %q is an empty file", s)
+	} else if err != nil {
+		return fmt.Errorf("unable to parse given file %q as a json object: %v", s, err)
+	}
+	return nil
 }
 
 func (v flagVariableFile) String() string {
