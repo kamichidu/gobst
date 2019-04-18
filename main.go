@@ -119,7 +119,8 @@ func makeTemplate(name string, r io.Reader, dir string, pat *regexp.Regexp) (*te
 func run(stdin io.Reader, stdout, stderr io.Writer, args []string) int {
 	var opts options
 	flg := flag.NewFlagSet(filepath.Base(args[0]), flag.ContinueOnError)
-	flg.SetOutput(stderr)
+	// disable to print usage on flag parse error
+	flg.SetOutput(ioutil.Discard)
 	flg.Usage = func() {
 		fmt.Fprint(flg.Output(), "Synopsis:\n  execute go text/template via cli\n\n")
 		fmt.Fprintf(flg.Output(), "Usage:\n  %s [options] {template file}\n\n", flg.Name())
@@ -134,6 +135,8 @@ func run(stdin io.Reader, stdout, stderr io.Writer, args []string) int {
 	flg.StringVar(&opts.Dir, "dir", "", "the `DIRECTORY` that finding template files matching glob")
 	flg.StringVar(&opts.Pat, "pat", `\.tmpl$`, "template file `REGEXP`")
 	if err := flg.Parse(args[1:]); err == flag.ErrHelp {
+		flg.SetOutput(os.Stdout)
+		flg.Usage()
 		return 0
 	} else if err != nil {
 		fmt.Fprintln(stderr, err)
@@ -142,6 +145,7 @@ func run(stdin io.Reader, stdout, stderr io.Writer, args []string) int {
 		fmt.Fprintf(stdout, "%s %s\n", flg.Name(), version)
 		return 0
 	} else if flg.NArg() != 1 {
+		flg.SetOutput(os.Stderr)
 		flg.Usage()
 		return 128
 	}
