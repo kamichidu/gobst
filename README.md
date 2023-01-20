@@ -47,3 +47,5 @@ gobst defined functions are listed below:
 - slice(args ...interface{}) []interface{}
 - keys(v map[string]interface{}) []string
 - command(args ...interface{}) map[string]interface{}
+- md5(s string) string
+- md5file(s string) string
