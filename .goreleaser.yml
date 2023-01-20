@@ -9,12 +9,12 @@ builds:
       - windows
     goarch:
       - amd64
-archive:
-  replacements:
-    amd64: x86_64
-  format_overrides:
-    - goos: windows
-      format: zip
+archives:
+  - replacements:
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
 release:
   github:
     owner: kamichidu
