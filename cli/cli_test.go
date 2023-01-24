@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ func TestRun(t *testing.T) {
 		if err != nil {
 			panic(err)
 		}
-		code := run(&stdin, &stdout, &stderr, []string{
+		code := Run(&stdin, &stdout, &stderr, []string{
 			"gobst",
 			"-var", "name=kamichidu",
 			"-",
@@ -30,7 +30,7 @@ func TestRun(t *testing.T) {
 		var stdout bytes.Buffer
 		var stderr bytes.Buffer
 
-		code := run(nil, &stdout, &stderr, []string{
+		code := Run(nil, &stdout, &stderr, []string{
 			"gobst",
 			"-var", "name=kamichidu",
 			"./testdata/flat/simple.tmpl",
@@ -43,7 +43,7 @@ func TestRun(t *testing.T) {
 		var stdout bytes.Buffer
 		var stderr bytes.Buffer
 
-		code := run(nil, &stdout, &stderr, []string{
+		code := Run(nil, &stdout, &stderr, []string{
 			"gobst",
 			"-var", "name=kamichidu",
 			"-dir", "./testdata/nested/templates/",
